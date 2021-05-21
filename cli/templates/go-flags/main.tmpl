@@ -1,0 +1,44 @@
+{{define "main"}}
+package main
+
+import (
+	"log"
+
+	"github.com/jessevdk/go-flags"
+
+    {{with .Context "project"}}
+    // only looks up project once
+    // if no project then it is skipped
+    // if key fails return empty string
+    {{ $path = printf "%s/%s/%s" .Keys.hub .Keys.account .Name }}
+    {{end}}
+
+	{{ $path = .Join "/" "project.hub" "project.account" "project" }}
+    {{ $project = .Lookup "project" }}
+    //  "github.com/robbyriverside/brevity/internal/brevity"
+    "{{ $path }}/internal/{{ $project }}"
+
+	// "github.com/robbyriverside/brevity/internal/generator"
+    {{ range .Body }}
+    "{{ $path }}/internal/{{.Name}}"
+    {{- end}}
+)
+
+func main() {
+	parser := flags.NewParser({{ $project }}.Options, flags.Default)
+	parser.Name = {{ printf %q $project }}
+
+    {{range .Body }}
+	if err := {{.Name}}.AddCommand(parser); err != nil {
+		log.Fatal(err)
+	}
+    {{end}}
+
+	if _, err := parser.Parse(); err != nil {
+		if flagsErr, ok := err.(*flags.Error); ok && flagsErr.Type == flags.ErrHelp {
+			return
+		}
+		log.Fatal(err)
+	}
+}
+{{end}}

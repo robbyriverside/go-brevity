@@ -1,3 +1,6 @@
-brevity
-    cli:go-flags
-    
+brevity 
+    project:sample  hub:"github.com"  account:example
+        cli:go-flags
+            commands
+                command:exec
+                command:describe

@@ -1,4 +1,5 @@
 generator
     templates
+        template:main file:"cmd/{{ .Lookup "project" }}/main.go" element:commands
     actions
     
