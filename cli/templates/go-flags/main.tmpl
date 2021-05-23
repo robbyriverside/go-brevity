@@ -1,4 +1,4 @@
-{{define "main"}}
+{{define "main" -}}
 package main
 
 import (
@@ -19,17 +19,16 @@ func main() {
 	parser := flags.NewParser({{ $project }}.Options, flags.Default)
 	parser.Name = {{ printf "%q" $project }}
 
-    {{range .Body }}
+    {{- range .Body }}
 	if err := {{.Name}}.AddCommand(parser); err != nil {
 		log.Fatal(err)
 	}
-    {{end}}
+    {{- end}}
 
 	if _, err := parser.Parse(); err != nil {
 		if flagsErr, ok := err.(*flags.Error); ok && flagsErr.Type == flags.ErrHelp {
 			return
 		}
-		log.Fatal(err)
 	}
 }
 {{end}}

@@ -4,6 +4,9 @@ brevity
             commands
                 command:exec desc:"execute command" short:"execute me"
                     args
-                        arg:Foo type:string description:"foo argument"
-                        arg:Bar type:int description:"bar argument"
+                        // arg and option will take any key value accepted by go-flags
+                        arg:Foo type:string description:"foo argument" env:FOO
+                        arg:Bar type:int description:"bar argument" env:BAR
+                    options
+                        option:Verbose long:verbose type:bool description:"print verbose" short:"v"
                 command:describe desc:"describe command" short:"describe me"

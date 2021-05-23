@@ -1,0 +1,10 @@
+{{define "execute" -}}
+package {{.Name}}
+
+import "errors"
+
+// Execute the {{.Name}} command
+func (cmd *Command) Execute(args []string) error {
+    return errors.New("command {{.Name}} not implemented")
+}
+{{- end}}

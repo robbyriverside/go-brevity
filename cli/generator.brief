@@ -1,6 +1,11 @@
 generator
     templates
         template:main file:"cmd/{{ .Lookup `project` }}/main.go" element:commands
+        template:options file:"internal/{{ .Lookup `project` }}/options.go" element:cli
         template:command file:"internal/{{ .Name }}/command.go" element:command
+        template:execute file:"internal/{{ .Name }}/execute.go" element:command
+
     actions
-    
+        action:mod exec:"go mod init {{.Join `/` `project.hub` `project.account` `project`}}" element:cli
+        action:getflags exec:"go get github.com/jessevdk/go-flags" element:project
+        action:build exec:"go build -o {{.Name}} cmd/{{ .Name }}/main.go" element:project
