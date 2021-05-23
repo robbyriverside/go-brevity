@@ -1,5 +1,6 @@
 generator
     templates
-        template:main file:"cmd/{{ .Lookup "project" }}/main.go" element:commands
+        template:main file:"cmd/{{ .Lookup `project` }}/main.go" element:commands
+        template:command file:"internal/{{ .Name }}/command.go" element:command
     actions
     

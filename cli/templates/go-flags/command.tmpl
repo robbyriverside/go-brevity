@@ -1,0 +1,32 @@
+{{define "command" -}}
+package {{.Name}}
+
+import (
+    "github.com/jessevdk/go-flags"
+)
+
+type Command struct {
+{{- with .FindNode "args"}}
+    {{- if .Body}}
+    Args struct {
+    {{- end}}
+    {{- range .Body}}
+        {{.Name}} {{.Key "type"}} `
+        {{- range $key, $value := .Keys }}{{if ne $key "type"}} {{$key}}:{{printf "%q" $value}}{{end}}{{end}}`
+    {{- end}}
+    {{- if .Body}}
+    } `positional-args:"true" required:"true"`
+    {{- end}}
+{{- end}}
+}
+
+// AddCommand to the parser
+func AddCommand(parser *flags.Parser) error {
+	_, err := parser.AddCommand("{{.Name}}",
+		"{{.Keys.short}}",
+		"{{.Keys.desc}}",
+		&Command{},
+	)
+	return err
+}
+{{end}}

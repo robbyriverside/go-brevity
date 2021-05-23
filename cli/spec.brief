@@ -1,6 +1,9 @@
 brevity 
     project:sample  hub:"github.com"  account:example
-        cli:go-flags
+        cli:"go-flags"
             commands
-                command:exec
-                command:describe
+                command:exec desc:"execute command" short:"execute me"
+                    args
+                        arg:Foo type:string description:"foo argument"
+                        arg:Bar type:int description:"bar argument"
+                command:describe desc:"describe command" short:"describe me"
