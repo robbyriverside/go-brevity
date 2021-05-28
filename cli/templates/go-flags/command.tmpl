@@ -7,7 +7,7 @@ import (
 
 // Command for {{.Name}}
 type Command struct {
-    {{- with .FindNode "args"}}
+    {{- with .Child "args"}}
     {{- if .Body}}
     Args struct {
     {{- end}}
@@ -19,7 +19,7 @@ type Command struct {
     } `positional-args:"true" required:"true"`
     {{- end}}
     {{- end}}
-    {{- with .FindNode "options"}}
+    {{- with .Child "options"}}
     {{- range .Body}}
     {{.Name}} {{.Key "type"}} `
         {{- range $key, $value := .Keys }}{{if ne $key "type"}}{{$key}}:{{printf "%q" $value}} {{end}}{{end}}`
