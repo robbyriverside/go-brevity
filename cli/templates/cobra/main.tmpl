@@ -1,0 +1,42 @@
+{{define "main" -}}
+package main
+
+import (
+	"log"
+
+	"github.com/spf13/cobra"
+
+	{{$path := .Join "/" "project.hub" "project.account" "project" }}
+    {{- $project := .Lookup "project" }}
+    "{{ $path }}/internal/{{ $project }}"
+
+	{{- range .Body }}
+    "{{ $path }}/internal/{{.Name}}"
+    {{- end}}
+)
+
+func main() {
+    rootCmd := cobra.Command{
+        Use: {{ printf "%q" $project }},
+        {{- if .Keys.short}}
+        Short: {{printf "%q" .Keys.short}},
+        {{- end}}
+        {{- if .Keys.desc}}
+        Long: {{printf "%q" .Keys.desc}},
+        {{- end}}
+        RunE: {{.Lookup "project"}}.Run,
+    }
+
+    {{$project}}.AddFlags(&rootCmd)
+
+    {{- range .Body }}
+	if err := {{.Name}}.AddCommand(&rootCmd); err != nil {
+		log.Fatal(err)
+	}
+    {{- end}}
+
+	if err := rootCmd.Execute(); err != nil {
+        log.Fatal(err)
+    }
+}
+{{end}}

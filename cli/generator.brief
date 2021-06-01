@@ -1,7 +1,7 @@
 generator
     templates
         template:main file:"cmd/{{ .Lookup `project` }}/main.go" element:commands
-        template:options file:"internal/{{ .Lookup `project` }}/options.go" element:cli
+        template:options file:"internal/{{ .Lookup `project` }}/options.go" element:options
         template:command file:"internal/{{ .Name }}/command.go" element:command
         template:execute file:"internal/{{ .Name }}/execute.go" element:command
 

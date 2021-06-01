@@ -1,0 +1,20 @@
+{{define "options" -}}
+package {{.Lookup "project"}}
+
+import "github.com/spf13/cobra"
+
+type options struct {
+{{- range .Body}}
+    {{title .Name}} {{.Keys.type}}
+{{- end}}
+}
+
+var Options = &options{}
+
+func AddFlags(rootCmd *cobra.Command) {
+    {{- range .Body}}
+    rootCmd.PersistentFlags().{{.Key "type" | title}}VarP(&Options.{{title .Name}}, "{{.Name}}", "{{.Keys.short}}", {{.Keys.default}}, "{{.Keys.description}}")
+    {{- end}}
+}
+
+{{- end}}

@@ -1,0 +1,3 @@
+generator
+    templates
+        template:root file:"internal/{{ .Lookup `project` }}/execute.go" element:cli

@@ -1,0 +1,14 @@
+{{define "execute" -}}
+package {{.Name}}
+
+import (
+    "errors"
+
+    "github.com/spf13/cobra"
+)
+
+// Run the {{.Name}} command
+func Run(cmd *cobra.Command, args []string) error {
+    return errors.New("command {{.Name}} not implemented")
+}
+{{- end}}

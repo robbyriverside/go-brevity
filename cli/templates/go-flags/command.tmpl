@@ -31,7 +31,11 @@ type Command struct {
 func AddCommand(parser *flags.Parser) error {
 	_, err := parser.AddCommand("{{.Name}}",
 		"{{.Keys.short}}",
-		"{{.Keys.desc}}",
+        {{- with .Child "desc"}}
+		`{{.Content}}`,
+        {{- else}}
+        ``
+        {{- end}}
 		&Command{},
 	)
 	return err

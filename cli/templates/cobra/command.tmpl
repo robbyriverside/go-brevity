@@ -1,0 +1,21 @@
+{{define "command" -}}
+package {{.Name}}
+
+import (
+    "github.com/spf13/cobra"
+)
+
+// AddCommand {{.Name}} to the parser
+func AddCommand(rootCmd *cobra.Command) error {
+    cmd := cobra.Command{
+        Use: "{{ .Name }}",
+        Short: "{{ .Keys.short }}",
+        {{- with .Child "desc"}}
+        Long: `{{ .Content }}`,
+        {{- end}}
+        RunE: Run,
+    }
+	rootCmd.AddCommand(&cmd)
+    return nil
+}
+{{end}}
