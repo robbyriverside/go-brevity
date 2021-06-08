@@ -1,17 +1,17 @@
 {{define "main" -}}
 package main
+{{- $path := .Join "/" "project.hub" "project.account" "project" }}
+{{- $project := .Lookup "project" }}
+{{- $commands := .FindAll "command" }}
 
 import (
 	"log"
 
 	"github.com/jessevdk/go-flags"
 
-	{{$path := .Join "/" "project.hub" "project.account" "project" }}
-    {{- $project := .Lookup "project" }}
     "{{ $path }}/internal/{{ $project }}"
-
-	{{- range .Body }}
-    "{{ $path }}/internal/{{.Name}}"
+	{{- range $commands }}
+    "{{ $path }}/internal/{{.Collect "command" | join ""}}"
     {{- end}}
 )
 
@@ -19,8 +19,8 @@ func main() {
 	parser := flags.NewParser({{ $project }}.Options, flags.Default)
 	parser.Name = {{ printf "%q" $project }}
 
-    {{- range .Body }}
-	if err := {{.Name}}.AddCommand(parser); err != nil {
+    {{range $commands }}
+	if err := {{.Collect "command" | join ""}}.AddCommand(parser); err != nil {
 		log.Fatal(err)
 	}
     {{- end}}

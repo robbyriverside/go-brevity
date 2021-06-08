@@ -1,5 +1,5 @@
 brevity 
-    project:sample  hub:"github.com"  account:example
+    project:sample1  hub:"github.com"  account:example
         cli:"cobra"
             commands
                 command:exec short:"execute me"
@@ -12,3 +12,6 @@ brevity
                         option:verbose long:verbose type:bool description:"print verbose" short:"v" default:false 
                 command:describe short:"describe me"
                     desc `describe command`
+                    commands
+                        command:list
+                            desc `list description`

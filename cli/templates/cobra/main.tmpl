@@ -1,16 +1,17 @@
 {{define "main" -}}
 package main
+{{- $path := .Join "/" "project.hub" "project.account" "project" }}
+{{- $project := .Lookup "project" }}
+{{- $commands := .FindAll "command" }}
 
 import (
 	"log"
 
 	"github.com/spf13/cobra"
 
-	{{$path := .Join "/" "project.hub" "project.account" "project" }}
-    {{- $project := .Lookup "project" }}
-    "{{ $path }}/internal/{{ $project }}"
+	"{{ $path }}/internal/{{ $project }}"
 
-	{{- range .Body }}
+	{{- range $commands }}
     "{{ $path }}/internal/{{.Name}}"
     {{- end}}
 )
@@ -29,7 +30,7 @@ func main() {
 
     {{$project}}.AddFlags(&rootCmd)
 
-    {{- range .Body }}
+    {{- range $commands }}
 	if err := {{.Name}}.AddCommand(&rootCmd); err != nil {
 		log.Fatal(err)
 	}
