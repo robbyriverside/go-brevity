@@ -2,6 +2,10 @@
 package {{.Lookup "project"}}
 
 type options struct {
+    {{- range .Body}}
+    {{.Name}} {{.Key "type"}} `
+        {{- range $key, $value := .Keys }}{{if ne $key "type"}}{{$key}}:{{printf "%q" $value}} {{end}}{{end}}`
+    {{- end}}
 }
 
 var Options = &options{}

@@ -1,6 +1,6 @@
 brevity 
-    project:sample  hub:"github.com"  account:example
-        cli:"go-flags"
+    project:sample1  hub:"github.com"  account:example
+        cli:"cobra"
             commands
                 command:exec short:"execute me"
                     desc `exec command`
