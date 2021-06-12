@@ -7,7 +7,7 @@ type options struct {
     {{- range .Body}}
     {{ title .Name }} {{.Key "type"}} `
         {{- range $key, $value := .Keys }}
-        {{- if has $key $badkeys | not}}{{$key}}:"{{$value}}" {{end}}{{end}}`
+        {{- if has $key $badkeys}}{{else}}{{$key}}:"{{$value}}" {{end}}{{end}}`
     {{- end}}
 {{- end}}
 }
