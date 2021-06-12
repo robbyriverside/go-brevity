@@ -5,9 +5,19 @@ import (
     "github.com/spf13/cobra"
 )
 
+type options struct {
+{{- with .Child "options"}}
+{{- range .Body}}
+    {{title .Name}} {{.Keys.type}}
+{{- end}}
+{{- end}}
+}
+
+var Options = &options{}
+
 // AddCommand {{.Name}} to the parser
 func AddCommand(rootCmd *cobra.Command) error {
-    cmd := cobra.Command{
+    cmd := &cobra.Command{
         Use: "{{ .Name }}",
         Short: "{{ .Keys.short }}",
         {{- with .Child "desc"}}
@@ -15,7 +25,12 @@ func AddCommand(rootCmd *cobra.Command) error {
         {{- end}}
         RunE: Run,
     }
-	rootCmd.AddCommand(&cmd)
+	rootCmd.AddCommand(cmd)
+{{- with .Child "options"}}
+    {{- range .Body}}
+    cmd.Flags().{{.Key "type" | title}}VarP(&Options.{{title .Name}}, "{{.Name}}", "{{.Keys.short}}", {{.Keys.default}}, "{{.Keys.description}}")
+    {{- end}}
+{{- end}}
     return nil
 }
 {{end}}

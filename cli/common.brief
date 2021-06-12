@@ -1,0 +1,20 @@
+options
+    option:verbose long:verbose type:bool description:"print verbose" short:"v" default:false 
+    option:debug long:debug type:bool description:"print debug messages" short:"d" default:false 
+commands
+    command:exec short:"execute me"
+        desc `exec command`
+        args
+            // arg and option will take any key value accepted by go-flags
+            arg:Foo type:string description:"foo argument" env:FOO
+            arg:Bar type:int description:"bar argument" env:BAR
+        options
+            option:combine long:combine type:bool description:"combine exec output" short:"c" default:false 
+            option:output long:output type:string description:"output file name" short:"o" default:"``" 
+    command:describe short:"describe me"
+        desc `describe command`
+        commands
+            command:list
+                options
+                    option:pretty type:bool description:"describe pretty print" short:"p" default:false long:"pretty"
+                desc `list description`

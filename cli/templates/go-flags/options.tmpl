@@ -1,11 +1,15 @@
 {{define "options" -}}
 package {{.Lookup "project"}}
+{{- $badkeys := list "type" "default"}}
 
 type options struct {
+{{- with .Child "options"}}
     {{- range .Body}}
-    {{.Name}} {{.Key "type"}} `
-        {{- range $key, $value := .Keys }}{{if ne $key "type"}}{{$key}}:{{printf "%q" $value}} {{end}}{{end}}`
+    {{ title .Name }} {{.Key "type"}} `
+        {{- range $key, $value := .Keys }}
+        {{- if has $key $badkeys | not}}{{$key}}:"{{$value}}" {{end}}{{end}}`
     {{- end}}
+{{- end}}
 }
 
 var Options = &options{}

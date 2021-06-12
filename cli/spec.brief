@@ -1,17 +1,5 @@
 brevity 
-    project:sample  hub:"github.com"  account:example
+    project:flagspec  hub:"github.com"  account:example
         cli:"go-flags"
-            commands
-                command:exec short:"execute me"
-                    desc `exec command`
-                    args
-                        // arg and option will take any key value accepted by go-flags
-                        arg:Foo type:string description:"foo argument" env:FOO
-                        arg:Bar type:int description:"bar argument" env:BAR
-                    options
-                        option:verbose long:verbose type:bool description:"print verbose" short:"v" default:false 
-                command:describe short:"describe me"
-                    desc `describe command`
-                    commands
-                        command:list
-                            desc `list description`
+            #include `common.brief`
+            
