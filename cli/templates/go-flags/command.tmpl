@@ -1,5 +1,5 @@
 {{define "command" -}}
-package {{.Name}}
+package {{.Collect "command" | join ""}}
 {{- $badkeys := list "type" "default"}}
 
 import (

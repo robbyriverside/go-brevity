@@ -12,7 +12,7 @@ import (
 	"{{ $path }}/internal/{{ $project }}"
 
 	{{- range $commands }}
-    "{{ $path }}/internal/{{.Name}}"
+    "{{ $path }}/internal/{{.Collect "command" | join ""}}"
     {{- end}}
 )
 
@@ -31,7 +31,7 @@ func main() {
     {{$project}}.AddFlags(&rootCmd)
 
     {{- range $commands }}
-	if err := {{.Name}}.AddCommand(&rootCmd); err != nil {
+	if err := {{.Collect "command" | join ""}}.AddCommand(&rootCmd); err != nil {
 		log.Fatal(err)
 	}
     {{- end}}
