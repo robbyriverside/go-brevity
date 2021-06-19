@@ -5,9 +5,9 @@ import "github.com/spf13/cobra"
 
 type options struct {
 {{- with .Child "options"}}
-{{- range .Body}}
+    {{- range .Body}}
     {{title .Name}} {{.Keys.type}}
-{{- end}}
+    {{- end}}
 {{- end}}
 }
 

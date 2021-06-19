@@ -8,27 +8,30 @@ import (
 
 // Command for {{.Name}}
 type Command struct {
-    {{- with .Child "args"}}
+{{- with .Child "args"}}
     {{- if .Body}}
     Args struct {
     {{- end}}
+
     {{- range .Body}}
         {{ title .Name }} {{.Key "type"}} `
         {{- range $key, $value := .Keys }}
         {{- if has $key $badkeys}}{{else}}{{$key}}:"{{$value}}" {{end}}{{end}}`
     {{- end}}
+
     {{- if .Body}}
     } `positional-args:"true" required:"true"`
     {{- end}}
-    {{- end}}
-    {{- with .Child "options"}}
+{{- end}}
+
+{{- with .Child "options"}}
     {{- range .Body}}
     {{ title .Name }} {{.Key "type"}} `
         {{- range $key, $value := .Keys }}
         {{- if has $key $badkeys}}{{else}}{{$key}}:"{{$value}}" {{end}}
         {{- end}}`
     {{- end}}
-    {{- end}}
+{{- end}}
 }
 
 // AddCommand {{.Name}} to the parser
