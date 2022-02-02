@@ -1,0 +1,33 @@
+define:commands #|
+package {{.Lookup "project"}}
+{{- $path := .Join "/" "project.hub" "project.account" "project" }}
+{{- $project := .Lookup "project" }}
+{{- $commands := .FindAll "command" }}
+
+import (
+	"github.com/jessevdk/go-flags"
+
+    {{range $commands}}
+    "{{ $path }}/internal/{{.Collect "command" | join ""}}"
+    {{- end}}
+)
+
+{{- $args := "rootCmd *cobra.Command"}}
+{{- $arg := "rootCmd"}}
+{{- if eq .Name "go-flags"}}
+{{- $args = "parser *flags.Parser"}}
+{{- $arg = "parser"}}
+{{- end}}
+
+// AddCommands for {{$project}} CLI
+func AddCommands({{$args}}) error {
+   {{- range $commands }}
+	if err := {{.Collect "command" | join ""}}.AddCommand({{$arg}}); err != nil {
+		return err
+	}
+    {{- end}} 
+    return nil
+}
+
+{{- end}}
+|#

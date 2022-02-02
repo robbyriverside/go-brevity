@@ -1,4 +1,130 @@
-generator
-    templates
-        template:root file:"internal/{{ .Lookup `project` }}/execute.go" element:cli
-    actions
+definitions:cobra
+    define:command #|
+package {{.Collect "command" | join ""}}
+
+import (
+    "github.com/spf13/cobra"
+)
+
+type options struct {
+{{- with .Child "options"}}
+    {{- range .Body}}
+    {{title .Name}} {{.Keys.type}}
+    {{- end}}
+{{- end}}
+}
+
+var Options = &options{}
+
+// AddCommand {{.Name}} to the parser
+func AddCommand(rootCmd *cobra.Command) error {
+    cmd := &cobra.Command{
+        Use: "{{ .Name }}",
+        Short: "{{ .Keys.short }}",
+        {{- with .Child "desc"}}
+        Long: `{{ .Content }}`,
+        {{- end}}
+        RunE: Run,
+    }
+	rootCmd.AddCommand(cmd)
+{{- with .Child "options"}}
+    {{- range .Body}}
+    cmd.Flags().{{.Key "type" | title}}VarP(&Options.{{title .Name}}, "{{.Name}}", "{{.Keys.short}}", {{.Keys.default}}, "{{.Keys.description}}")
+    {{- end}}
+{{- end}}
+    return nil
+}
+|#
+
+
+    define:execute #|
+package {{.Collect "command" | join ""}}
+
+import (
+    "errors"
+
+    "github.com/spf13/cobra"
+)
+
+// Run the {{.Name}} command
+func Run(cmd *cobra.Command, args []string) error {
+    return errors.New("command {{.Name}} not implemented")
+}
+|#
+
+
+    define:main #|
+package main
+{{- $path := .Join "/" "project.hub" "project.account" "project" }}
+{{- $project := .Lookup "project" }}
+{{- $commands := .FindAll "command" }}
+
+import (
+	"log"
+
+	"github.com/spf13/cobra"
+
+	"{{ $path }}/internal/{{ $project }}"
+)
+
+func main() {
+    rootCmd := cobra.Command{
+        Use: {{ printf "%q" $project }},
+        {{- if .Keys.short}}
+        Short: {{printf "%q" .Keys.short}},
+        {{- end}}
+        {{- if .Keys.desc}}
+        Long: {{printf "%q" .Keys.desc}},
+        {{- end}}
+        RunE: {{.Lookup "project"}}.Run,
+    }
+
+    {{$project}}.AddFlags(&rootCmd)
+
+    if err := {{$project}}.AddCommands(&rootCmd); err != nil {
+        log.Fatal(err)
+    }
+
+	if err := rootCmd.Execute(); err != nil {
+        log.Fatal(err)
+    }
+}
+|#
+
+    define:options #|
+package {{.Lookup "project"}}
+
+import "github.com/spf13/cobra"
+
+type options struct {
+{{- with .Child "options"}}
+    {{- range .Body}}
+    {{title .Name}} {{.Keys.type}}
+    {{- end}}
+{{- end}}
+}
+
+var Options = &options{}
+
+func AddFlags(rootCmd *cobra.Command) {
+{{- with .Child "options"}}
+    {{- range .Body}}
+    rootCmd.PersistentFlags().{{.Key "type" | title}}VarP(&Options.{{title .Name}}, "{{.Name}}", "{{.Keys.short}}", {{.Keys.default}}, "{{.Keys.description}}")
+    {{- end}}
+{{- end}}
+}
+|#
+
+    define:root |#
+package {{.Lookup "project"}}
+
+import (
+    "errors"
+
+    "github.com/spf13/cobra"
+) 
+
+func Run(cmd *cobra.Command, args []string) error {
+    return errors.New("root command {{.Lookup "project"}} not implemented")
+}
+|#

@@ -1,0 +1,110 @@
+definitions:"go-flags" section:cli
+    define:options #|
+package {{.Lookup "project"}}
+{{- $badkeys := list "type" "default"}}
+
+type options struct {
+{{- with .Child "options"}}
+    {{- range .Body}}
+    {{ title .Name }} {{.Key "type"}} `
+        {{- range $key, $value := .Keys }}
+        {{- if has $key $badkeys}}{{else}}{{$key}}:"{{$value}}" {{end}}{{end}}`
+    {{- end}}
+{{- end}}
+}
+
+var Options = &options{}
+|#
+
+    define:command #|
+package {{.Collect "command" | join ""}}
+{{- $badkeys := list "type" "default"}}
+
+import (
+    "github.com/jessevdk/go-flags"
+)
+
+// Command for {{.Name}}
+type Command struct {
+{{- with .Child "args"}}
+    {{- if .Body}}
+    Args struct {
+    {{- end}}
+
+    {{- range .Body}}
+        {{ title .Name }} {{.Key "type"}} `
+        {{- range $key, $value := .Keys }}
+        {{- if has $key $badkeys}}{{else}}{{$key}}:"{{$value}}" {{end}}{{end}}`
+    {{- end}}
+
+    {{- if .Body}}
+    } `positional-args:"true" required:"true"`
+    {{- end}}
+{{- end}}
+
+{{- with .Child "options"}}
+    {{- range .Body}}
+    {{ title .Name }} {{.Key "type"}} `
+        {{- range $key, $value := .Keys }}
+        {{- if has $key $badkeys}}{{else}}{{$key}}:"{{$value}}" {{end}}
+        {{- end}}`
+    {{- end}}
+{{- end}}
+}
+
+// AddCommand {{.Name}} to the parser
+func AddCommand(parser *flags.Parser) error {
+	_, err := parser.AddCommand("{{.Name}}",
+		"{{.Keys.short}}",
+        {{- with .Child "desc"}}
+		`{{.Content}}`,
+        {{- else}}
+        ``
+        {{- end}}
+		&Command{},
+	)
+	return err
+}
+|#
+
+
+    define:execute #|
+package {{.Collect "command" | join ""}}
+
+import "errors"
+
+// Execute the {{.Name}} command
+func (cmd *Command) Execute(args []string) error {
+    return errors.New("command {{.Name}} not implemented")
+}
+|#
+
+
+    define:main #|
+package main
+{{- $path := .Join "/" "project.hub" "project.account" "project" }}
+{{- $project := .Lookup "project" }}
+
+import (
+	"log"
+
+	"github.com/jessevdk/go-flags"
+
+    "{{ $path }}/internal/{{ $project }}"
+)
+
+func main() {
+	parser := flags.NewParser({{ $project }}.Options, flags.Default)
+	parser.Name = {{ printf "%q" $project }}
+
+	if err := {{$project}}.AddCommands(parser); err != nil {
+		log.Fatal(err)
+	}
+
+    if _, err := parser.Parse(); err != nil {
+		if flagsErr, ok := err.(*flags.Error); ok && flagsErr.Type == flags.ErrHelp {
+			return
+		}
+	}
+}
+|#
